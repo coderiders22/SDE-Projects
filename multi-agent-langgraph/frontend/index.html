@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Agent Code Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 14px 24px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .agent-dots { display: flex; gap: 6px; }
+    .agent-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-planner   { background: #60a5fa; }
+    .dot-developer { background: #34d399; }
+    .dot-reviewer  { background: #fbbf24; }
+
+    header h1 { font-size: 17px; font-weight: 600; }
+    header p  { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+    /* ── Chat area ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 24px;
+    }
+
+    .messages {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* ── User bubble ── */
+    .msg-user {
+      align-self: flex-end;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      max-width: 68%;
+      animation: fadeUp 0.2s ease;
+    }
+
+    .msg-user .bubble {
+      background: #4338ca;
+      color: #e0e7ff;
+      padding: 11px 16px;
+      border-radius: 18px 18px 4px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .avatar-user {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #4f46e5;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: white;
+      flex-shrink: 0;
+    }
+
+    /* ── Agent bubble ── */
+    .msg-agent {
+      align-self: flex-start;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      max-width: 88%;
+      animation: fadeUp 0.2s ease;
+    }
+
+    .avatar-agent {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: white;
+      flex-shrink: 0; margin-top: 20px;
+    }
+
+    .avatar-planner   { background: #2563eb; }
+    .avatar-developer { background: #059669; }
+    .avatar-reviewer  { background: #d97706; }
+
+    .msg-body { display: flex; flex-direction: column; gap: 5px; }
+
+    .agent-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .label-planner   { color: #60a5fa; }
+    .label-developer { color: #34d399; }
+    .label-reviewer  { color: #fbbf24; }
+
+    .round-tag {
+      font-size: 10px; font-weight: 500;
+      color: #64748b; margin-left: 6px;
+      text-transform: none; letter-spacing: 0;
+    }
+
+    .bubble {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 14px 16px;
+      border-radius: 4px 18px 18px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Plan list ── */
+    .plan-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .plan-list li { display: flex; gap: 10px; align-items: flex-start; }
+    .step-num {
+      background: #1d4ed822;
+      color: #60a5fa;
+      border-radius: 50%;
+      width: 22px; height: 22px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; margin-top: 1px;
+    }
+
+    /* ── Tool badge ── */
+    .tool-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #0f172a; border: 1px solid #334155;
+      color: #94a3b8; font-size: 11px; padding: 3px 9px;
+      border-radius: 4px; font-family: monospace; margin-bottom: 10px;
+    }
+
+    /* ── Code block ── */
+    .code-wrap {
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid #334155; margin-top: 4px;
+    }
+    .code-wrap pre { margin: 0; max-height: 320px; overflow-y: auto; }
+    .code-wrap code { font-size: 13px; }
+
+    /* ── Execution output ── */
+    .output-label {
+      font-size: 11px; color: #475569;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-top: 10px; margin-bottom: 5px;
+    }
+    .output-box {
+      background: #0f172a; border: 1px solid #334155;
+      border-radius: 6px; padding: 10px 12px;
+      font-family: monospace; font-size: 12px; color: #94a3b8;
+      max-height: 120px; overflow-y: auto; white-space: pre-wrap;
+    }
+
+    /* ── Review badge ── */
+    .review-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 13px; font-weight: 600; margin-bottom: 10px;
+    }
+    .badge-approved      { background: #05966918; color: #34d399; border: 1px solid #05966940; }
+    .badge-rejected      { background: #dc262618; color: #f87171; border: 1px solid #dc262640; }
+    .badge-clarification { background: #d9770618; color: #fbbf24; border: 1px solid #d9770640; }
+
+    /* ── Typing indicator ── */
+    .typing-row {
+      align-self: flex-start;
+      display: flex; align-items: flex-start; gap: 10px;
+      animation: fadeUp 0.2s ease;
+    }
+
+    .typing-body { display: flex; flex-direction: column; gap: 5px; }
+
+    .typing-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    .typing-dots {
+      display: flex; align-items: center; gap: 5px;
+      background: #1e293b; border: 1px solid #334155;
+      padding: 13px 18px;
+      border-radius: 4px 18px 18px 18px;
+    }
+    .typing-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #475569;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      border-top: 1px solid #1e293b;
+      padding: 14px 24px;
+      flex-shrink: 0;
+    }
+    .input-inner {
+      max-width: 780px; margin: 0 auto;
+      display: flex; gap: 10px; align-items: flex-end;
+    }
+    textarea {
+      flex: 1; background: #1e293b; border: 1px solid #334155;
+      color: #f1f5f9; border-radius: 12px;
+      padding: 11px 16px; font-size: 14px; font-family: inherit;
+      resize: none; outline: none;
+      max-height: 120px; line-height: 1.5;
+      transition: border-color 0.15s;
+    }
+    textarea:focus     { border-color: #4338ca; }
+    textarea::placeholder { color: #475569; }
+    textarea:disabled  { opacity: 0.45; cursor: not-allowed; }
+
+    button#sendBtn {
+      background: #4338ca; color: white; border: none;
+      border-radius: 10px; padding: 11px 22px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: background 0.15s; white-space: nowrap;
+    }
+    button#sendBtn:hover:not(:disabled) { background: #4f46e5; }
+    button#sendBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Misc ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .welcome {
+      text-align: center; color: #334155;
+      font-size: 13px; padding: 40px 0;
+      user-select: none;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="agent-dots">
+    <div class="agent-dot dot-planner"></div>
+    <div class="agent-dot dot-developer"></div>
+    <div class="agent-dot dot-reviewer"></div>
+  </div>
+  <div>
+    <h1>Multi-Agent Code Generator</h1>
+    <p>Planner · Developer · Reviewer</p>
+  </div>
+</header>
+
+<div class="chat-area" id="chatArea">
+  <div class="messages" id="messages">
+    <div class="welcome">Describe a task and the agents will plan, write, and review the code.</div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-inner">
+    <textarea id="taskInput" rows="1"
+              placeholder="Describe what you want to build..."
+              onkeydown="handleKeydown(event)"></textarea>
+    <button id="sendBtn" onclick="sendTask()">Send</button>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000/api/v1';
+
+  const AGENTS = {
+    planner:   { label: 'Planner',   initial: 'P', avatarCls: 'avatar-planner',   labelCls: 'label-planner'   },
+    developer: { label: 'Developer', initial: 'D', avatarCls: 'avatar-developer', labelCls: 'label-developer' },
+    reviewer:  { label: 'Reviewer',  initial: 'R', avatarCls: 'avatar-reviewer',  labelCls: 'label-reviewer'  },
+  };
+
+  let typingEl = null;
+  let currentTask = '';
+  let clarificationMode = null; // { originalTask, question, askedBy }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  function esc(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function scrollToBottom() {
+    const area = document.getElementById('chatArea');
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function setRunning(on) {
+    document.getElementById('taskInput').disabled = on;
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = on;
+    btn.textContent = on ? 'Running...' : 'Send';
+  }
+
+  function enterClarificationMode(originalTask, question, askedBy) {
+    clarificationMode = { originalTask, question, askedBy };
+    setRunning(false);
+    document.getElementById('taskInput').placeholder = `Answer ${askedBy}'s question…`;
+    document.getElementById('sendBtn').textContent = 'Reply';
+  }
+
+  function exitClarificationMode() {
+    clarificationMode = null;
+    document.getElementById('taskInput').placeholder = 'Describe what you want to build...';
+  }
+
+  // ── Message builders ─────────────────────────────────────────────────────
+
+  function addUserMessage(text) {
+    const msgs = document.getElementById('messages');
+    const el = document.createElement('div');
+    el.className = 'msg-user';
+    el.innerHTML = `
+      <div class="bubble">${esc(text)}</div>
+      <div class="avatar-user">You</div>
+    `;
+    msgs.appendChild(el);
+    scrollToBottom();
+  }
+
+  function showTyping(agent) {
+    hideTyping();
+    const a = AGENTS[agent];
+    const msgs = document.getElementById('messages');
+    typingEl = document.createElement('div');
+    typingEl.className = 'typing-row';
+    typingEl.innerHTML = `
+      <div class="avatar-agent ${a.avatarCls}">${a.initial}</div>
+      <div class="typing-body">
+        <span class="typing-label ${a.labelCls}">${a.label} is typing…</span>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+      </div>
+    `;
+    msgs.appendChild(typingEl);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    if (typingEl) { typingEl.remove(); typingEl = null; }
+  }
+
+  function addAgentMessage(agent, innerHtml, round) {
+    hideTyping();
+    const a = AGENTS[agent];
+    const roundTag = round > 0
+      ? `<span class="round-tag">· Round ${round + 1}</span>` : '';
+    const msgs = document.getElementById('messages');
+    const el = document.createElement('div');
+    el.className = 'msg-agent';
+    el.innerHTML = `
+      <div class="avatar-agent ${a.avatarCls}">${a.initial}</div>
+      <div class="msg-body">
+        <span class="agent-label ${a.labelCls}">${a.label}${roundTag}</span>
+        <div class="bubble">${innerHtml}</div>
+      </div>
+    `;
+    msgs.appendChild(el);
+    el.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+    scrollToBottom();
+  }
+
+  // ── Content renderers ─────────────────────────────────────────────────────
+
+  function renderPlanner(ev) {
+    if (ev.decision === 'needs_clarification') {
+      return `
+        <span class="review-badge badge-clarification">❓ Needs clarification</span>
+        <div>${esc(ev.clarification_question)}</div>
+      `;
+    }
+    const items = (ev.plan || []).map((s, i) => `
+      <li>
+        <span class="step-num">${i + 1}</span>
+        <span>${esc(s)}</span>
+      </li>`).join('');
+    return `<ol class="plan-list">${items}</ol>`;
+  }
+
+  function renderDeveloper(ev) {
+    const tool = ev.tool || 'unknown';
+    const lang = tool === 'run_shell_command' ? 'bash' : 'python';
+    let html = `<div class="tool-badge">⚙ ${esc(tool)}</div>`;
+    if (ev.code) {
+      html += `
+        <div class="code-wrap">
+          <pre><code class="language-${lang}">${esc(ev.code)}</code></pre>
+        </div>`;
+    }
+    if (ev.execution_result) {
+      html += `
+        <div class="output-label">Output</div>
+        <div class="output-box">${esc(ev.execution_result)}</div>`;
+    }
+    return html;
+  }
+
+  function renderReviewer(ev) {
+    if (ev.needs_clarification) {
+      return `
+        <span class="review-badge badge-clarification">❓ Needs clarification</span>
+        <div>${esc(ev.clarification_question)}</div>
+      `;
+    }
+    const badge = ev.approved
+      ? `<span class="review-badge badge-approved">✓ Approved</span>`
+      : `<span class="review-badge badge-rejected">✗ Rejected</span>`;
+    return `${badge}<div>${esc(ev.feedback)}</div>`;
+  }
+
+  // ── SSE event handler ─────────────────────────────────────────────────────
+
+  function handleEvent(ev) {
+    if (ev.event !== 'agent_done' && ev.event !== 'done' && ev.event !== 'error') return;
+
+    if (ev.event === 'agent_done') {
+      if (ev.agent === 'planner') {
+        addAgentMessage('planner', renderPlanner(ev), 0);
+        if (ev.decision === 'needs_clarification') {
+          enterClarificationMode(currentTask, ev.clarification_question, 'Planner');
+        } else {
+          showTyping('developer');
+        }
+
+      } else if (ev.agent === 'developer') {
+        addAgentMessage('developer', renderDeveloper(ev), ev.round ?? 0);
+        showTyping('reviewer');
+
+      } else if (ev.agent === 'reviewer') {
+        addAgentMessage('reviewer', renderReviewer(ev), ev.round ?? 0);
+        if (ev.needs_clarification) {
+          enterClarificationMode(currentTask, ev.clarification_question, 'Reviewer');
+        } else if (!ev.approved) {
+          showTyping('developer');
+        }
+      }
+      return;
+    }
+
+    // done or error
+    hideTyping();
+    setRunning(false);
+    if (ev.event === 'error') addErrorMessage(ev.detail);
+  }
+
+  function addErrorMessage(text) {
+    const msgs = document.getElementById('messages');
+    const el = document.createElement('div');
+    el.style.cssText = 'text-align:center;color:#f87171;font-size:13px;padding:6px;';
+    el.textContent = `Error: ${text}`;
+    msgs.appendChild(el);
+    scrollToBottom();
+  }
+
+  // ── Send ──────────────────────────────────────────────────────────────────
+
+  async function sendTask() {
+    const input = document.getElementById('taskInput');
+    const userInput = input.value.trim();
+    if (!userInput) return;
+
+    // Clear welcome message on first send
+    const welcome = document.querySelector('.welcome');
+    if (welcome) welcome.remove();
+
+    let task;
+    if (clarificationMode) {
+      task = `${clarificationMode.originalTask}\n\n${clarificationMode.askedBy} asked: ${clarificationMode.question}\nUser answered: ${userInput}`;
+      exitClarificationMode();
+    } else {
+      task = userInput;
+      currentTask = task;
+    }
+
+    input.value = '';
+    input.style.height = 'auto';
+    addUserMessage(userInput);
+    setRunning(true);
+    showTyping('planner');
+
+    try {
+      const res = await fetch(`${API}/run/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: task }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try { handleEvent(JSON.parse(line.slice(6))); } catch (_) {}
+          }
+        }
+      }
+    } catch (err) {
+      hideTyping();
+      setRunning(false);
+      addErrorMessage(err.message);
+    }
+  }
+
+  function handleKeydown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTask(); }
+  }
+
+  // Auto-resize textarea
+  document.getElementById('taskInput').addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+</script>
+</body>
+</html>
