@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/backgroundC"
+    tools:context=".ui.activities.VideoViewActivity">
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/exoPlayerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:resize_mode="fit"
+        app:shutter_background_color="@color/backgroundC"
+        app:use_controller="false" />
+
+    <ImageView
+        android:id="@+id/imgThumb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:clickable="false"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background50"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/btBack"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/round_arrow_back_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/fore" />
+
+            <TextView
+                android:id="@+id/tvPartnerName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="@color/fore"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/tvDetails"
+                app:layout_constraintStart_toEndOf="@id/btBack"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvDetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:alpha=".6"
+                android:fontFamily="@font/nunito_medium"
+                android:textColor="@color/fore"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btBack"
+                app:layout_constraintTop_toBottomOf="@id/tvPartnerName" />
+
+            <ImageView
+                android:id="@+id/btSaveToGallery"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_save_to_gallery"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btDelete"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/fore" />
+
+            <ImageView
+                android:id="@+id/btDelete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/fore" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/imgPlay"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/round_bg"
+        android:backgroundTint="#66000000"
+        android:contentDescription="@string/app_name"
+        android:padding="12dp"
+        android:src="@drawable/ic_play"
+        android:transitionName="PLAY_BUTTON"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+
+    <com.tomer.chitchat.ui.views.MsgBackground
+        android:id="@+id/bgBtMute"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/btMute"
+        app:layout_constraintEnd_toEndOf="@id/btMute"
+        app:layout_constraintStart_toStartOf="@id/btMute"
+        app:layout_constraintTop_toTopOf="@id/btMute" />
+
+    <ImageView
+        android:id="@+id/btMute"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="12dp"
+        android:contentDescription="@string/app_name"
+        android:padding="8dp"
+        android:src="@drawable/ic_speaker_cross"
+        app:layout_constraintBottom_toTopOf="@+id/seekPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
+
+    <com.tomer.chitchat.ui.views.MsgBackground
+        android:id="@+id/bgTvLength"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/tvLength"
+        app:layout_constraintEnd_toEndOf="@id/tvLength"
+        app:layout_constraintStart_toStartOf="@id/tvLength"
+        app:layout_constraintTop_toTopOf="@id/tvLength" />
+
+    <com.tomer.chitchat.ui.views.MsgBackground
+        android:id="@+id/bgTvCurrentTime"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/tvCurrentTime"
+        app:layout_constraintEnd_toEndOf="@id/tvCurrentTime"
+        app:layout_constraintStart_toStartOf="@id/tvCurrentTime"
+        app:layout_constraintTop_toTopOf="@id/tvCurrentTime" />
+
+    <TextView
+        android:id="@+id/tvLength"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_margin="12dp"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/seekPlayer"
+        app:layout_constraintEnd_toStartOf="@id/btMute" />
+
+    <TextView
+        android:id="@+id/tvCurrentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_margin="12dp"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/seekPlayer"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/seekPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.92" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
