@@ -1,0 +1,43 @@
+package com.tomer.chitchat.modals.states
+
+enum class FlowType {
+    MSG,
+    UPLOAD_SUCCESS,
+    UPLOAD_FAILS,
+    DOWNLOAD_SUCCESS,
+    DOWNLOAD_FAILS,
+    RELOAD_RV,
+    RELOAD_RV_MORE,
+
+    SET_PREFS,
+
+    SERVER_REC,
+    PARTNER_REC,
+
+    TYPING,
+    NO_TYPING,
+    ONLINE,
+    OFFLINE,
+    SEND_NEW_CONNECTION_REQUEST,
+    INCOMING_NEW_CONNECTION_REQUEST,
+    OPEN_NEW_CONNECTION_ACTIVITY,
+
+    REQ_ACCEPTED,
+    REQ_REJECTED,
+
+    CHANGE_GIF,
+    SHOW_BIG_JSON,
+    SHOW_BIG_GIF,
+    SET_TYPING_GIF,
+    SET_DP,
+
+    OPEN_FILE,
+    OPEN_IMAGE,
+    OPEN_GIF,
+    OPEN_VIDEO,
+
+    SEND_BULK_REC,
+    SEND_PR,
+
+    PONG
+}
