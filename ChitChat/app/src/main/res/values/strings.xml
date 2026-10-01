@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">ChitChat</string>
+    <string name="otp_verification">OTP Verification</string>
+    <string name="we_will_send_you_an_one_time_password_on_this_mobile_number">We will send you an One Time Password on this mobile number via Whatsapp</string>
+    <string name="_91">+91 - </string>
+    <string name="_123456789">123456789</string>
+    <string name="get_otp">GET OTP</string>
+    <string name="enter_mobile_number">Enter Mobile Number</string>
+    <string name="enter_the_otp_sent_to">Enter the OTP sent to</string>
+    <string name="didn_t_receive_the_otp">Didn\'t receive the OTP?</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">RESEND OTP</string>
+    <string name="message">Write Message…</string>
+    <string name="profile_info">Profile Information</string>
+    <string name="provide_name_photo">Provide your name and Profile Photo</string>
+    <string name="type_your_name">Type your name</string>
+    <string name="enter_your_name">Enter your Name</string>
+    <string name="type_mobile_no">Type Mobile No…</string>
+    <string name="retry">Retry</string>
+    <string name="resend_in_40">Resend in 40</string>
+    <string name="profile">Profile</string>
+    <string name="name">Name</string>
+    <string name="about">About</string>
+    <string name="phone">Phone No</string>
+    <string name="message_corners">Message corners</string>
+    <string name="message_text_size">Message text size</string>
+    <string name="background_parallax_factor">Background parallax factor</string>
+    <string name="notifications">Notifications</string>
+    <string name="chat_lock">Chat Lock</string>
+    <string name="shared_media_files">Shared media files</string>
+    <string name="phone_call">Phone</string>
+    <string name="video">Video</string>
+    <string name="chat_background">Chat background</string>
+    <string name="wallpaper">Wallpaper</string>
+    <string name="no_media_shared_till_now">No media shared till now</string>
+</resources>

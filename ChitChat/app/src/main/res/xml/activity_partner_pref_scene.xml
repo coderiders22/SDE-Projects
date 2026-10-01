@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+        <KeyFrameSet>
+            <KeyTrigger
+                motion:framePosition="0"
+                motion:motionTarget="@+id/scrollMain"
+                motion:onCross="method" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="60"
+                motion:motionTarget="@+id/tvNameSmall" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="60"
+                motion:motionTarget="@+id/div" />
+
+            <KeyAttribute
+                android:alpha="0.3"
+                motion:framePosition="100"
+                motion:motionTarget="@+id/div" />
+
+            <KeyAttribute
+                android:alpha="1"
+                motion:framePosition="62"
+                motion:motionTarget="@+id/tvNameSmall" />
+        </KeyFrameSet>
+        <OnSwipe
+            motion:dragDirection="dragUp"
+            motion:touchAnchorId="@+id/scrollMain"
+            motion:touchAnchorSide="top" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+
+        <Constraint
+            android:id="@+id/tvNameSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            motion:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+            motion:layout_constraintEnd_toStartOf="@+id/imgProfile"
+            motion:layout_constraintTop_toTopOf="@+id/imgProfile" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/imgProfile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            motion:layout_constraintStart_toEndOf="@+id/btBack"
+            motion:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@+id/tvNameSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:alpha="1"
+            motion:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+            motion:layout_constraintEnd_toStartOf="@null"
+            motion:layout_constraintStart_toEndOf="@id/imgProfile"
+            motion:layout_constraintTop_toTopOf="@+id/imgProfile" />
+    </ConstraintSet>
+</MotionScene>
