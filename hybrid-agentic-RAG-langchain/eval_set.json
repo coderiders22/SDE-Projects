@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What is our production deployment process?",
+    "ground_truth": "Replace with the expected answer from your Confluence docs.",
+    "relevant_chunk_ids": []
+  },
+  {
+    "question": "How do we handle on-call escalations?",
+    "ground_truth": "Replace with the expected answer from your Confluence docs.",
+    "relevant_chunk_ids": []
+  },
+  {
+    "question": "What is the security policy for requesting access to production databases?",
+    "ground_truth": "Replace with the expected answer from your Confluence docs.",
+    "relevant_chunk_ids": []
+  }
+]
